@@ -1,8 +1,8 @@
 ## What it does
 
-`grilling` is the interview loop that stress-tests a plan, a decision, or an idea before anyone acts on it. It maps the subject as a **design tree**: every decision branches into the decisions that hang off it, and interviews you branch by branch until no assumption stays unstated.
+`grilling` is the interview loop that stress-tests a plan, a decision, or an idea before anyone acts on it. It maps the subject as a **design tree**: every decision branches into the decisions that hang off it, and the interview walks the tree dependency by dependency until no assumption stays unstated.
 
-It does not ask one question at a time, and it does not ask everything at once. Each **round** asks the whole **frontier**: every decision whose prerequisites are already settled, and nothing else. Two questions never share a round if one depends on the other; a question that hinges on an answer still open belongs to a later round. Your answers settle decisions, the frontier moves outward, and the next round asks what that unblocked. Thirteen questions typically land in about three rounds rather than thirteen.
+It does not put every open branch to you. Before asking anything, it tests each candidate question for whether it is a **false question**: a choice that looks open but is already settled by evidence, by a decision on record, by a cheap test, or by not mattering yet. It decides those itself and reports each one. Only **genuine questions** reach you, and they reach you once, in a single numbered **end list** after the whole tree is walked and reviewed.
 
 ## When to reach for it
 
@@ -18,17 +18,56 @@ Typing `/grilling` directly gets you the plain interview and nothing else. Where
 | A question that talking cannot settle: how something should look or feel | [prototype](https://aihero.dev/skills-prototype): build the throwaway version, then come back |
 | A skill of your own that needs an interview | Invoke `/grilling` from it, rather than writing another interview |
 
-## The round, the frontier, and who decides
+## False questions and who decides
 
-The skill rests on three ideas.
+Every candidate question is classified silently, after the agent has read whatever code, documents and prior decisions bear on it. It lands in one of three places:
 
-The **design tree** is the model of the subject: decisions with decisions hanging off them. The **frontier** is the set of decisions whose prerequisites are all settled: the only questions the agent can ask yet. A **round** is one frontier, asked in full and answered in full.
+| What the candidate turns out to be | What happens |
+| --- | --- |
+| A false question | The agent decides it and reports an **autonomous decision**: the decision, why it was the agent's to make, and the alternatives it rejected. It does not pause for approval, and you can override any of them. |
+| A genuine question | It goes to the end list with a recommended answer. Decisions that depend on it go ahead on that recommendation, marked provisional. |
+| Unclear whether it is yours or the agent's | It goes to the end list as a **meta-classification question**: should the agent decide this type of question, or always ask you? Your answer can become a permanent amendment to the skill, but only with your explicit approval. |
 
-Inside a round, every question has a fixed format: numbered and titled behind a `❓`, then the body, then the agent's recommended answer alone on a `➡️` line. This format lets you answer a round by number ("1 yes, 2 the second option, 3 no, here's why") instead of by quoting questions back. The format has one known problem. The recommendation sometimes argues *against* the question as it was worded, so agreeing with the recommendation means answering "no" to the question. When that happens, answer the recommendation and say so.
+A false question is one where a single option wins on every count, a recorded decision or rule already fixes the answer, the [environment](https://www.aihero.dev/ai-coding-dictionary/environment) can answer it, a small test can settle it, the choice is immaterial and cheap to change, it belongs to a branch that may never arise, it serves only a speculative future, the options are not really in conflict, or the requirements already determine the mechanism.
 
-The other half of the design is the split between facts and decisions. Facts are the skill's own job. When a frontier question needs something the [environment](https://www.aihero.dev/ai-coding-dictionary/environment) can settle, the agent dispatches a [sub-agent](https://www.aihero.dev/ai-coding-dictionary/subagent) to find out rather than asking you. The round does not wait for that research; only the questions that depend on it wait. Decisions are yours, and the agent must wait for them. An agent running `grilling` that answers its own decisions has broken the skill. The session ends when the frontier is empty. The agent then waits for you to confirm a shared understanding before it acts on what you agreed.
+Some questions come to you even when they look false:
 
-The frontier has one limit. The agent chooses it by judgement; it does not compute it from a graph. So it can put two questions in one round and only later find that one answer should have changed the other. The only guard is to tell it. That reopens the affected branch in the next round.
+- an earlier commitment may need reconsidering, because concrete work exposed a conflict or a defect in it
+- the step is destructive, hard to reverse, externally visible, costly, security-sensitive, or outside the authority you have granted
+- settling the question by evidence would be disproportionately costly or risky, so you choose whether to fund the investigation
+- a downstream consequence could decide whether the upstream direction is viable
+- a credible future requirement, backed by concrete evidence, would be costly to accommodate later
+- the obvious choice adds a dependency, framework, service or overlapping capability to the codebase
+- the code shows what it does, but nothing establishes whether that behaviour is intended.
+
+## The end list
+
+Nothing pauses the walk. A genuine question is parked with its recommended answer, and the walk carries on. When it ends, every open question arrives together, numbered, and each item carries:
+
+- the question itself in red, worded so that "yes" accepts the recommended answer
+- enough background that a newcomer could follow it without the transcript
+- a worked example of what each option would produce, side by side in a table when the options compare along the same lines
+- "doing nothing" named as an option, with what it would leave in place
+- the recommended answer, and the provisional decisions that flip if you answer otherwise.
+
+The one question that may come earlier is your name, asked once and folded into the conversation, when the skill does not yet know who you are.
+
+## Profiles and delegated answers
+
+The skill keeps one **profile** per person, stored beside the skill. It records the name you want to be called, an **ask-me scope** (what you want asked directly), a **delegate-to-AI scope** (what you want decided on your behalf) and any rulings on domains that straddle the two. Scopes start empty, so everything is asked until you draw a line, and a scope is written only after the agent shows you the exact profile text and you confirm it. If you correct the name it calls you, it treats that as a different person in the room and switches profiles.
+
+A genuine question that falls only inside your delegate-to-AI scope goes to a separate answering [subagent](https://www.aihero.dev/ai-coding-dictionary/subagent) instead of to you. It comes back as a **delegated answer**: the full question, the answer, what the answer rests on, and the profile line that routed it. A delegated answer is tentative until the end review settles it, and your own answer to the same question always supersedes it. A question that trips one of the exceptions above, matches both scopes, or matches neither still comes to you. Where the answering subagent is not available, the agent says so once and answers delegated questions in the same session.
+
+## The end review
+
+When the tree is walked, and before you are asked anything, a reviewer subagent that never saw the conversation checks every decision made. It is told not to favour a decision because it is already made, because it is easier, or because you chose it.
+
+| What the reviewer would change | What happens |
+| --- | --- |
+| An autonomous decision or a delegated answer | The change is applied and reported, showing the original answer, the reviewer's concern and the revised answer. |
+| A decision you made | It is never applied without your approval. It joins the end list with the reviewer's recommendation and evidence. |
+
+You then get a short summary in three groups (decisions the reviewer approved, decisions it revised, and your own decisions it disagreed with), followed by the end list. Answering the list confirms the summary unless you object. If no reviewer subagent is available, the agent says so and asks you to confirm the summary instead.
 
 ## What lives here and what lives in the wrappers
 
@@ -36,51 +75,45 @@ This page covers the mechanism. The wrapper skills' pages answer the questions p
 
 | Question | Where it is answered |
 | --- | --- |
-| The tree, the frontier, rounds, the question format, facts vs decisions | Here |
+| The tree, false questions, the end list, profiles, delegated answers, the end review | Here |
 | How long a session should run, what to do with a question you can't answer by talking, how to avoid nodding along | [grill-me](https://aihero.dev/skills-grill-me) |
 | What gets written to `GLOSSARY.md`, what becomes an ADR | [grill-with-docs](https://aihero.dev/skills-grill-with-docs) |
 
 ## Common questions
 
+**It decided things without asking me.**
+That is the design for false questions. The earlier version put every open branch to you, including ones that already had a sensible default, and users reported spending their answers on questions whose answer was obvious. Each decision the agent takes is reported as an autonomous decision naming why it was the agent's to make and what it rejected, so you can override it. What it must not decide alone is anything on the exception list above, or anything outside your delegate-to-AI scope. If it decided one of those, the run broke the skill, and saying so reopens the decision.
+
+**What happened to rounds?**
+They are gone. Earlier versions asked one question at a time, then a round at a time: every question whose prerequisites were settled. Users reported rounds asked while exploration was still running, which the exploration then rewrote. This version walks the whole tree first, decides the false questions, proceeds on recommendations for the genuine ones, runs the end review, and only then asks. Nothing is asked of you before the evidence is in.
+
 **Can I go back to one question at a time?**
-Yes, and a large part of the audience does. Add this to your global `CLAUDE.md`:
+Not as a supported setting. The skill asks every open question in one end list and rules out one question per turn. A list whose items each carry their own background and worked examples can be answered item by item, at your own pace.
 
-```
-When grilling, ask one question at a time.
-```
-
-Not everyone prefers the round-based default. Users who read slowly, who work in a second language, or who use the sequential format to help them focus report that one question at a time works better for them. The opt-out is a supported setting, not a workaround.
-
-**Where did `/batch-grill-me` go?**
-Into this skill. Round-based questioning shipped briefly as a separate skill, then moved into `grilling` itself, so everything built on the primitive (`grill-me`, `grill-with-docs`, `triage`, `wayfinder`) got it at once. There is no `batch-grill-me` to install, and no separate sequential skill either; the `CLAUDE.md` line above is the way back to one-at-a-time.
-
-**Asking a whole round at once must lose the questions my earlier answers would have raised. Doesn't it?**
-This is the most common objection to rounds, and the frontier answers it. A round only contains questions that do not depend on each other, so no answer in a round can invalidate another question in that round. Your answers still change what comes after them, because the agent works out each next round from scratch. You do lose something, but less than "all questions at once" implies. See the frontier's limit above.
+**The questions don't make sense without scrolling back.**
+Each item is meant to stand alone: background a newcomer could follow, a worked example per option, and no reliance on earlier question numbers. A question that leans on a name invented earlier in the session, or on a bare ticket number, has broken that format. Ask the agent to restate it in full.
 
 **It ran out of questions and started building.**
-The confirmation gate exists for this. The skill is finished when you say the understanding is shared, not when the frontier empties. Weaker and faster [models](https://www.aihero.dev/ai-coding-dictionary/model) still skip the gate. Users report this most often on lower-effort or non-frontier models, which collapse "interview until shared understanding" into a couple of questions and an outline. If yours does it, the reliable fix is a line in your own `AGENTS.md` or `CLAUDE.md` telling the agent not to implement without permission.
-
-**It answered its own questions instead of asking me.**
-That is a bug in the run, and it is the reason the skill's text separates facts from decisions. It happens most when another skill runs `grilling` to resolve a ticket, and the agent takes that task as permission to keep moving. The same constraint is why there is no async mode. People have asked for a variant that reads a GitHub issue and posts one consolidated decision memo, and that is a different skill, because a grilling session that nobody answers has produced the agent's opinion rather than yours.
+The skill ends by telling you plainly that the grilling session is done, and acting on the plan is a separate instruction from you. Weaker and faster [models](https://www.aihero.dev/ai-coding-dictionary/model) still skip ahead. Users report this most often on lower-effort or non-frontier models, which collapse "interview until shared understanding" into a couple of questions and an outline. If yours does it, the reliable fix is a line in your own `AGENTS.md` or `CLAUDE.md` telling the agent not to implement without permission.
 
 **Can I cap the number of questions?**
-No, and a cap is out of scope on purpose. Some plans need three questions and some need fifty; a fixed ceiling either truncates the hard case or feels arbitrary on the easy one. The intended control is plain language. Tell it to wrap up, or stop and accept the plan where it stands. If a session is running very long, the cause is usually that the scope was too big; break the work up and grill the pieces.
+No, and a cap is out of scope on purpose. Some plans need three questions and some need fifty, and a fixed ceiling either truncates the hard case or feels arbitrary on the easy one. The intended control is plain language. Tell it to wrap up, or stop and accept the plan where it stands. If the end list is very long, the cause is usually that the scope was too big. Break the work up and grill the pieces.
 
 **I installed `grill-me` on its own and nothing happens.**
-`grill-me` is a one-line skill whose whole body is "run a `/grilling` session", so it needs this skill installed too. The same is true of `grill-with-docs`, which additionally needs [domain-modeling](https://aihero.dev/skills-domain-modeling). Installing the whole set avoids the problem; installing selectively means installing the primitives as well.
+`grill-me` is a one-line skill whose whole body is "run a `/grilling` session", so it needs this skill installed too. The same is true of `grill-with-docs`, which additionally needs [domain-modeling](https://aihero.dev/skills-domain-modeling). Installing the whole set avoids the problem. Installing selectively means installing the primitives as well.
 
 **`grill-with-docs` ran, but it never loaded `grilling`.**
-This is a real bug, still unfixed, and users report it across [harnesses](https://www.aihero.dev/ai-coding-dictionary/harness) and models. A skill that names another skill does not reliably cause that skill to load, and `grill-with-docs` names two. The sign is a session that asks everything at once with no recommendations. That means the model is improvising an interview rather than running this one. Asking the agent directly whether it loaded `grilling` and `domain-modeling` usually recovers it.
+This is a real bug, still unfixed, and users report it across [harnesses](https://www.aihero.dev/ai-coding-dictionary/harness) and models. A skill that names another skill does not reliably cause that skill to load, and `grill-with-docs` names two. The sign is a session with no autonomous-decision reports and no end review, where questions arrive without recommendations or worked examples. That means the model is improvising an interview rather than running this one. Asking the agent directly whether it loaded `grilling` and `domain-modeling` usually recovers it.
 
 ## It's working if
 
-- A round arrives as a numbered list, each question with its recommendation on a separate `➡️` line, and you can answer the whole round by number.
-- Nothing in a round needs another question in the same round answered first.
-- Later rounds ask things the first round could not have asked.
-- It goes and looks facts up (reading files, dispatching a sub-agent) rather than asking you something it could have found out.
-- Research running in the background does not stall the round; only the questions that depend on it wait.
-- It stops at the end and asks you to confirm the understanding is shared, instead of starting work.
-- Question count stays high while round count stays low.
+- Autonomous decisions appear as the walk goes, each naming why it was the agent's call and what it rejected, and the agent keeps moving instead of waiting for approval.
+- Nothing is asked of you mid-walk, except your name once if the skill does not know you yet.
+- It reads files and runs small checks rather than asking you something it could have found out.
+- It never asks you to choose between vague virtues, or about a branch that may never arise.
+- Before any question, you get a short summary in three groups, and a reviewer change to a decision you made arrives as a question, not as a done deal.
+- The questions arrive together in one numbered list, each in red, with its background, a worked example per option, a "doing nothing" option, and a recommendation you can accept with "yes".
+- It ends by saying plainly that the session is done, and does not start building.
 
 ## Where it fits
 
