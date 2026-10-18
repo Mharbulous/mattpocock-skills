@@ -29,7 +29,3 @@ No em-dashes anywhere in this repo's prose (`SKILL.md` files, docs, `README.md`,
 ### Triage labels
 
 Canonical names, unchanged. See `docs/agents/triage-labels.md`. Issues are judged against [`SCOPE.md`](./SCOPE.md).
-
-## Forwarder skills
-
-`skills/productivity/grilling` and `skills/engineering/wayfinder` are deliberate forwarders. Each `SKILL.md` only tells the session to read the maintainer's CoClerk copy, which stays the single source. Do not inline either target into this repo: grilling's target holds a personal profile, and wayfinder's depends on tools, agents and shared files that exist only on the maintainer's machine. Any other `SKILL.md` that only points at a file outside this repo is a bug: report it.
