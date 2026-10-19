@@ -42,7 +42,7 @@ Some questions come to you even when they look false:
 
 ## The end list
 
-Nothing pauses the walk. A genuine question is parked with its recommended answer, and the walk carries on. When it ends, every open question arrives together, numbered, and each item carries:
+Nothing pauses the walk. A genuine question is parked with its recommended answer, and the walk carries on. When it ends, every open question arrives together, numbered, under a "HITL Questions" heading, and each item carries:
 
 - the question itself in red, worded so that "yes" accepts the recommended answer
 - enough background that a newcomer could follow it without the transcript
@@ -107,7 +107,7 @@ This is a real bug, still unfixed, and users report it across [harnesses](https:
 
 ## It's working if
 
-- Autonomous decisions appear as the walk goes, each naming why it was the agent's call and what it rejected, and the agent keeps moving instead of waiting for approval.
+- Autonomous decisions appear as the walk goes, under an "Autonomous Decisions" heading, each naming why it was the agent's call and what it rejected, and the agent keeps moving instead of waiting for approval.
 - Nothing is asked of you mid-walk, except your name once if the skill does not know you yet.
 - It reads files and runs small checks rather than asking you something it could have found out.
 - It never asks you to choose between vague virtues, or about a branch that may never arise.

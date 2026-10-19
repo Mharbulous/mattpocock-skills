@@ -16,7 +16,7 @@ Resolve this once, at invocation, before the first candidate question is classif
    - **Nothing confirmed anywhere** (no `profiles/` directory, nothing confirmed in it, and no valid pointer). Identity is unknown: bootstrap it (step 5) at a natural point early in the conversation, never as the literal opening line. Grilling is often invoked mid-conversation, so fold the ask into the first acknowledgment rather than opening with it. It is the one question that may come before the end list, because routing needs the profile.
    - **Multiple confirmed profiles and no valid pointer.** Should not arise in practice: the pointer is written every time a bootstrap completes or a switch is confirmed. If it somehow does, don't build a disambiguation flow for it: ask the user once, directly, which profile is theirs, as an ordinary genuine question (format: Asking the user), and write the pointer once they answer.
 
-3. **Weave the resolved name in, never as a greeting.** Work the active profile's preferred name into ordinary prose: inside a question, an acknowledgment, a summary. A fixed floor keeps "occasionally" from decaying into "never": use the name in the first substantive message after the profile resolves (which doubles as the earliest chance for a wrong-profile correction), again when opening a new branch of the design tree or summarizing progress, and in the Finish closing message. Beyond that floor, use judgment: not every message, and never inside the fenced report formats (Autonomous decision, Delegated answer, Fable disagreement), which are audit records, not conversation. Never open with "Hello, <name>": grilling frequently starts mid-conversation, and a cold greeting would announce a session-start ritual that isn't really happening.
+3. **Weave the resolved name in, never as a greeting.** Work the active profile's preferred name into ordinary prose: inside a question, an acknowledgment, a summary. A fixed floor keeps "occasionally" from decaying into "never": use the name in the first substantive message after the profile resolves (which doubles as the earliest chance for a wrong-profile correction), again when opening a new branch of the design tree or summarizing progress, and in the Finish closing message. Beyond that floor, use judgment: not every message, and never inside the report formats (Autonomous Decisions, Delegated answer, Fable disagreement), which are audit records, not conversation. Never open with "Hello, <name>": grilling frequently starts mid-conversation, and a cold greeting would announce a session-start ritual that isn't really happening.
 
 4. **A name correction is an identity-check event.** If the user corrects the name they were just addressed by ("That's not my name! I'm Barbara.") or otherwise indicates a different person is present, resolve identity again immediately, before continuing with anything else:
    - Slugify the stated name. If `profiles/<slug>.md` exists and its Status line reads confirmed, switch: update the pointer (best-effort, step 1), acknowledge the switch briefly using that file's own stored Preferred name ("Switching to your profile, Barbara."), and continue immediately under that profile's scopes. Speaking the stored name back is the safety check: if the file belongs to a different person who shares the name, or to a spelling variant that isn't them, the user hears it and can correct again.
@@ -53,12 +53,15 @@ Answer a candidate autonomously when:
 9. **False dichotomy.** The alternatives are compatible, complementary, or otherwise not mutually exclusive.
 10. **Means determined by outcomes.** Known requirements and constraints determine the implementation mechanism; the user need not select the mechanism itself.
 
-For every autonomous decision, report:
+Report every autonomous decision of the turn in one section headed `### Autonomous Decisions`, each as a bold title and three bullets, in normal text (never red):
 
-```text
-Autonomous decision: <the decision>
-Why autonomous: <false-question class>. <case-specific explanation>
-Decided against: <meaningful rejected alternatives and why>
+```markdown
+### Autonomous Decisions
+
+**<short title of the decision>**
+- Decision: <the decision>
+- Why I decided it myself: <false-question class>. <case-specific explanation>
+- Rejected: <meaningful rejected alternatives and why>
 ```
 
 Include only meaningful rejected alternatives; never invent alternatives to fill the format. Do not ask for approval or pause. Continue immediately to the next candidate question, and keep going until the design tree is complete. The user may override any reported autonomous decision.
@@ -83,7 +86,7 @@ A genuine question or an exception does not stop the walk. Defer it to the end l
 
 This section is the one home for how a question is put to the user. Other files point here rather than restate it.
 
-**When.** With several open questions, ask them in one numbered list at the end of the turn (the end list), never one per turn or one per message. The bootstrap name question (Active profile, step 2) is the only one asked before it.
+**When.** With several open questions, ask them in one numbered list at the end of the turn (the end list), under the heading `### HITL Questions`, never one per turn or one per message. The bootstrap name question (Active profile, step 2) is the only one asked before it.
 
 **What each item carries.**
 
@@ -160,7 +163,7 @@ Do not wait after a delegated answer. Continue immediately to the next candidate
 
 When the design tree is walked, review before asking the user anything.
 
-1. **Spawn one `reviewer` subagent, in the foreground, for a decision review.** It sees no transcript, so its brief carries: every decision made this session with its basis (each Autonomous decision and Delegated answer block verbatim, and each question the user answered with their answer), each deferred question with its recommended answer, what is marked provisional and what it depends on, and the plan or design under discussion. Tell it to check every decision for errors the user or a model may have made, and to reconsider each one. Tell it not to favour a decision because it is already made, because it is easier, or because the user chose it: the goal is the best decision.
+1. **Spawn one `reviewer` subagent, in the foreground, for a decision review.** It sees no transcript, so its brief carries: every decision made this session with its basis (each autonomous decision and Delegated answer block verbatim, and each question the user answered with their answer), each deferred question with its recommended answer, what is marked provisional and what it depends on, and the plan or design under discussion. Tell it to check every decision for errors the user or a model may have made, and to reconsider each one. Tell it not to favour a decision because it is already made, because it is easier, or because the user chose it: the goal is the best decision.
 2. **A change to a model's decision is applied.** That covers autonomous decisions and delegated answers. Report each as:
 
    ```text
@@ -186,6 +189,6 @@ Keep track of every resolved item: user-answered decisions, reported autonomous 
 
 Say "none" for an empty list. Do not ask the user to confirm the summary. They may override any item at any time.
 
-**End the turn with the end list.** After the summary, put every deferred question and every item the end review sent to the user in the end list, each item as Asking the user sets out. Answering the list confirms the summary unless the user objects. If nothing is left to ask, tell the user plainly that the grilling session is done.
+**End the turn with the end list.** After the summary, put every deferred question and every item the end review sent to the user in the end list under its `### HITL Questions` heading, each item as Asking the user sets out. Answering the list confirms the summary unless the user objects. If nothing is left to ask, tell the user plainly that the grilling session is done.
 
 **After the answers.** If an answer differs from the recommended one, or approves a change to the user's own decision, re-derive the affected dependents, send only those to the same reviewer once more, and report what changed. A new question that surfaces goes into a new list the same way. Once no question is left, tell the user plainly that the grilling session is done. Enacting the plan under discussion is a separate instruction from the user.
