@@ -68,6 +68,8 @@ Include only meaningful rejected alternatives; never invent alternatives to fill
 
 ## Exceptions that require the user
 
+Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent with a fresh context window to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
+
 A candidate that resembles a false question still requires human input when:
 
 1. **A governing commitment may need reconsideration.** Implementation or concrete design work exposes unforeseen implications, conflicts among commitments, unreasonable costs, or a defect in an earlier commitment.
